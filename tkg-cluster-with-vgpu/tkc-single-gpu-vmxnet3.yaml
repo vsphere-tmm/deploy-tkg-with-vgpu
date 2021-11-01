@@ -1,0 +1,49 @@
+apiVersion: run.tanzu.vmware.com/v1alpha2
+kind: TanzuKubernetesCluster
+metadata:
+  name: tkg-cluster-vgpu
+#The namespace name
+  namespace: ml-ns
+spec:
+  topology:
+    controlPlane:
+      replicas: 1
+#The storage policy for this Namespace, can get it by "kubectl get storageclass"
+      storageClass: vsan-r1
+      tkr:
+        reference:
+#The name of Tanzu Kubernetes Reference, can get it by "kubectl get tkr"
+#As of 10/25/2021, this is the only tkr that support vGPU
+          name: v1.20.8---vmware.1-tkg.2
+#For control plane, the default VM Class is good enough since it doesn't need vGPU
+      vmClass: best-effort-small
+    nodePools:
+#Creating worker nodes configured with vGPU backed by A100 in MIG mode with 20GB memory buffer
+    - name: a100gpuworkers
+      replicas: 2
+      storageClass: vsan-r1
+      tkr:
+        reference:
+          name: v1.20.8---vmware.1-tkg.2
+#The VM Class created earlier, can get it by "kubectl get vmclass"
+      vmClass: 4cpu-8gram-a100-mig-20c
+#Give containerd and kubelet each 50GiB capacity since more conatiner images will be installed later.
+      volumes: 
+      - name: containerd
+        mountPath: /var/lib/containerd
+        capacity:
+          storage: 50Gi
+      - name: kubelet
+        mountPath: /var/lib/kubelet
+        capacity:
+          storage: 50Gi
+  settings:
+    network:
+#Specify proxy and no Proxy for local network, if behind a proxy
+      proxy: 
+        httpProxy: http://10.244.72.252:3128
+        httpsProxy: http://10.244.72.252:3128
+        noProxy: [172.31.19.0/24,172.31.20.0/24]
+
+
+

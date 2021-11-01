@@ -1,0 +1,32 @@
+#File name: vm-svc-gpu-nic.yaml
+apiVersion: vmoperator.vmware.com/v1alpha1
+kind: VirtualMachine
+metadata:
+#Specify the name of VM to create and the namespace to be used.
+  name: ubuntu-vgpu-v100-32c-nic
+  namespace: ml-ns
+spec:
+#Specify the VM image name, which can be list by 'kubectl get vmimage'
+  imageName: ubuntu-20-1633387172196
+#Specify the name of VM class with vGPU, which can be list by 'kubectl get vmclass'
+#Run 'kubectl get vmclass VM_CLASS_NAME -o yaml' to verify it has vGPU configured
+  className: 4cpu-8gram-a100-mig-20c
+  powerState: poweredOn
+  storageClass: vsan-r1
+  networkInterfaces:
+  - networkName: "vm-network-520-pvr"
+    networkType: vsphere-distributed
+  vmMetadata:
+      configMapName: vmsvc-ubuntu-vgpu-cm
+      transport: OvfEnv
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: vmsvc-ubuntu-vgpu-cm
+    namespace: ml-ns
+data:
+  user-data: I2Nsb3VkLWNvbmZpZwp1c2VyczoKIC0gZGVmYXVsdAogLSBuYW1lOiB2bXdhcmUgCiAgIHN1ZG86IEFMTD0oQUxMKSBOT1BBU1NXRDpBTEwKICAgbG9ja19wYXNzd2Q6IGZhbHNlCiAgIHBhc3N3ZDogJyQ2JEhCRHZzSXZvemQvZC9RYXAkUmhiRUJ2UEprM3d6ekRoOXlLQXhaeUZyUVNRMkJsM2RPUlJ2SFlDSWR0bExrSkx3cmI1Vk0wUnpuMG9tRnY5aWVGd0hTQnB4N1YyN2V6NXBUVkhyZi8nCiAgIHNoZWxsOiAvYmluL2Jhc2gKc3NoX3B3YXV0aDogdHJ1ZQo= 
+
+
+

@@ -1,0 +1,9 @@
+#cloud-config
+users:
+ - default
+ - name: vmware 
+   sudo: ALL=(ALL) NOPASSWD:ALL
+   lock_passwd: false
+   passwd: '$6$HBDvsIvozd/d/Qap$RhbEBvPJk3wzzDh9yKAxZyFrQSQ2Bl3dORRvHYCIdtlLkJLwrb5VM0Rzn0omFv9ieFwHSBpx7V27ez5pTVHrf/'
+   shell: /bin/bash
+ssh_pwauth: true
