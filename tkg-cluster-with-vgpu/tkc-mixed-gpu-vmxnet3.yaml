@@ -55,8 +55,7 @@ spec:
           storage: 50Gi
   settings:
     network:
-#Specify proxy and no Proxy for local network, if behind a proxy
-      proxy: 
-        httpProxy: http://10.244.72.252:3128
-        httpsProxy: http://10.244.72.252:3128
-        noProxy: [172.31.19.0/24,172.31.20.0/24]
+      proxy: #Specify proxy and no Proxy for local network, if behind a proxy
+        httpProxy: http://1.2.3.4:1234
+        httpsProxy: http://1.2.3.4:1234
+        noProxy: [192.168.0.0/24,192.168.1.0/24]
